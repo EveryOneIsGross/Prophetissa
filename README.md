@@ -1,48 +1,50 @@
 # Prophetissa
 RAG dataset generator using ollama and emo vector search.
+Currently only using .txt for the injests as proof of concept.
+
 ```
 +--------------------------------------------------------------------------------+
-| Code Overview:                                                                  |
+| Code Overview:                                                                 |
 +--------------------------------------------------------------------------------+
 |                                                                                |
-| 1. Import Libraries                                                             |
-|    - JSON for handling data serialization.                                      |
-|    - Custom modules for search functionality and the Ollama inference API.      |
+| 1. Import Libraries                                                            |
+|    - JSON for handling data serialization.                                     |
+|    - Custom modules for search functionality and the Ollama inference API.     |
 |                                                                                |
-| 2. Ollama Client Initialization                                                 |
-|    - Base URL setup                                                             |
+| 2. Ollama Client Initialization                                                |
+|    - hijack openai api with yr local llm                                       |
 |                                                                                |
-| 3. Function Definitions:                                                        |
-|    - generate_questions                                                         |
+| 3. Function Definitions:                                                       |
+|    - generate_questions                                                        |
 |      * Generates synthetic questions based on a provided context using the     |
 |        Ollama inference API. Questions are designed to be diverse and relevant |
-|        to the input text, enhancing dataset richness for training.              |
+|        to the input text, enhancing dataset richness for training.             |
 |                                                                                |
-|    - generate_answer                                                            |
+|    - generate_answer                                                           |
 |      * For each synthetic question, generates a grounded answer using the      |
 |        same context. These Q&A pairs serve as a foundational training dataset  |
-|        for models requiring contextual understanding.                           |
+|        for models requiring contextual understanding.                          |
 |                                                                                |
-|    - load_json_data                                                             |
-|      * Loads data from a JSON file, used for appending new Q&A pairs.           |
+|    - load_json_data                                                            |
+|      * Loads data from a JSON file, used for appending new Q&A pairs.          |
 |                                                                                |
-|    - save_json_data                                                             |
+|    - save_json_data                                                            |
 |      * Serializes and saves updated Q&A pairs to a JSON file, preserving       |
-|        the data for further model training.                                     |
+|        the data for further model training.                                    |
 |                                                                                |
-|    - process_search_results                                                     |
+|    - process_search_results                                                    |
 |      * Utilizes a semantic search custom module to fetch relevant text chunks  |
-|        from a provided corpus.                                                  |
+|        from a provided corpus.                                                 |
 |      * Converts these chunks into a structured context which is then used to   |
 |        generate synthetic Q&A pairs, simulating realistic user interactions    |
-|        and enhancing the training dataset's diversity and quality.              |
+|        and enhancing the training dataset's diversity and quality.             |
 |                                                                                |
-| 4. Main Execution Flow:                                                         |
-|    - Reads a list of queries from a file.                                       |
+| 4. Main Execution Flow:                                                        |
+|    - Reads a list of queries from a file.                                      |
 |    - Each query is processed to simulate a real-world scenario where the model |
-|      would need to understand and interact based on textual inputs.             |
+|      would need to understand and interact based on textual inputs.            |
 |    - The results, including synthetic Q&A pairs, are saved to a JSON file,     |
-|      ready for use in training scenarios.                                       |
+|      ready for use in training scenarios.                                      |
 |                                                                                |
 +--------------------------------------------------------------------------------+
 |                                                                                |
@@ -56,7 +58,7 @@ RAG dataset generator using ollama and emo vector search.
 ---
 
 uses fine tuning prompt template from : [mistral ft guide](https://github.com/mistralai/mistral-finetune)
-uses densefeelsSEARCH for retrieval demo.
+uses densefeelsSEARCH for retrieval.
 
 ```
                                +------------+
