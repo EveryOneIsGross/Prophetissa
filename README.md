@@ -4,96 +4,86 @@ uses fine tuning prompt template from : [mistral ft guide](https://github.com/mi
 
 
 ```mermaid
-
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffaa00', 'primaryTextColor': '#ffaa00', 'primaryBorderColor': '#ffaa00', 'lineColor': '#ffaa00', 'secondaryColor': '#ffaa00', 'tertiaryColor': '#ffaa00', 'clusterBkg': 'none', 'clusterBorder': 'none', 'fontSize': '0px'}}}%%
 graph TD
 A((A)) --> B((B))
-B((B)) --> C((C))
+A((A)) --> C((C))
 B((B)) --> D((D))
-B((B)) --> E((E))
-C((C)) --> F((F))
-D((D)) --> G((G))
+C((C)) --> D((D))
+D((D)) --> E((E))
+E((E)) --> F((F))
+E((E)) --> G((G))
 E((E)) --> H((H))
 F((F)) --> I((I))
 G((G)) --> I((I))
 H((H)) --> I((I))
 I((I)) --> J((J))
 I((I)) --> K((K))
-I((I)) --> L((L))
-J((J)) --> M((M))
-K((K)) --> M((M))
+J((J)) --> L((L))
+K((K)) --> L((L))
 L((L)) --> M((M))
 M((M)) --> N((N))
 N((N)) --> O((O))
-O((O)) --> P((P))
-P((P)) --> Q((Q))
-Q((Q)) --> A((A))
-
-R((R)) --> C((C))
-S((S)) --> D((D))
-T((T)) --> E((E))
-U((U)) --> F((F))
-V((V)) --> G((G))
-W((W)) --> H((H))
-X((X)) --> I((I))
 
 subgraph Input
-A((A))
+A((A)):::input1
 end
 
 subgraph Preprocess
-B((B))
-C((C))
-D((D))
-E((E))
+B((B)):::process
+C((C)):::process
 end
 
 subgraph TrainWord2Vec
-F((F))
-G((G))
-H((H))
+D((D)):::process
 end
 
 subgraph AnalyzeSentiment
-I((I))
+E((E)):::process
 end
 
 subgraph SmoothVectors
-J((J))
-K((K))
-L((L))
+F((F)):::process
+G((G)):::process
+H((H)):::process
 end
 
 subgraph SemanticSearch
-M((M))
-N((N))
+I((I)):::process
 end
 
 subgraph DensityMapping
-O((O))
-P((P))
+J((J)):::process
+K((K)):::process
 end
 
 subgraph AdaptiveChunking
-Q((Q))
+L((L)):::process
 end
 
 subgraph Output
-R((R))
-S((S))
-T((T))
-U((U))
-V((V))
-W((W))
-X((X))
+M((M)):::output
+N((N)):::output
+O((O)):::output
 end
 
 subgraph "Parameter Space"
-R((R))
-S((S))
-T((T))
-U((U))
-V((V))
-W((W))
-X((X))
+P((P)):::params --> B((B))
+Q((Q)):::params --> C((C))
+R((R)):::params --> D((D))
+S((S)):::params --> E((E))
+T((T)):::params --> F((F))
+U((U)):::params --> G((G))
+V((V)):::params --> H((H))
+W((W)):::params --> I((I))
+X((X)):::params --> J((J))
+Y((Y)):::params --> K((K))
+Z((Z)):::params --> L((L))
 end
+
+classDef input1 fill:#f9f,stroke:#333,stroke-width:4px;
+classDef process fill:#ff9,stroke:#333,stroke-width:4px;
+classDef output fill:#9f9,stroke:#333,stroke-width:4px;
+classDef params fill:#f99,stroke:#333,stroke-width:4px;
+
 ```
