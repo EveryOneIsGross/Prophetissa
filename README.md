@@ -6,9 +6,15 @@ RAG dataset generator using **ollama** and **densefeelSEARCH**. This script perf
 TO RUN:
 -------
 ```
+
 ~ensure yr seedcorpus.txt is formatted with items on new lines~
 
 > python prophetissa.py --file_path "corpus.txt" --seed_queries_file "seedcorpus.txt" --output_file "dataset.json"
+
+~ to rank results and create mistral compatible jsonl
+
+> python judgeDREAD.py dataset.json --threshold 0.75
+
 ```
 
 OUTPUT SCHEMA:
