@@ -1,8 +1,7 @@
 # Prophetissa
 -------------
 
-RAG dataset generator using ollama and emo vector search.
-Currently only using .txt for the injests as proof of concept.
+RAG dataset generator using **ollama** and **densefeelSEARCH**. This script performs a semantic search on input data, generates context-based questions and then answers, and saves the results in a JSON file, providing an automated way to generate a grounded dataset for finetuning. Currently only using .txt for the injests as proof of concept.
 
 OUTPUT SCHEMA:
 --------------
