@@ -6,84 +6,68 @@ uses fine tuning prompt template from : [mistral ft guide](https://github.com/mi
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffaa00', 'primaryTextColor': '#ffaa00', 'primaryBorderColor': '#ffaa00', 'lineColor': '#ffaa00', 'secondaryColor': '#ffaa00', 'tertiaryColor': '#ffaa00', 'clusterBkg': 'none', 'clusterBorder': 'none', 'fontSize': '0px'}}}%%
 graph TD
-A((A)) --> B((B))
-A((A)) --> C((C))
-B((B)) --> D((D))
-C((C)) --> D((D))
-D((D)) --> E((E))
-E((E)) --> F((F))
-E((E)) --> G((G))
-E((E)) --> H((H))
-F((F)) --> I((I))
-G((G)) --> I((I))
-H((H)) --> I((I))
-I((I)) --> J((J))
-I((I)) --> K((K))
-J((J)) --> L((L))
-K((K)) --> L((L))
-L((L)) --> M((M))
-M((M)) --> N((N))
-N((N)) --> O((O))
+A1((Text File)) --> B1[Preprocess and Chunk]
+A2((Query)) --> K1[Semantic Search]
+
+B1 --> C1[Train Word2Vec]
+B1 --> D1[Analyze Sentiment]
+C1 --> E1[Corpus Vectors]
+D1 --> E1
+E1 --> F1[Smooth Vectors]
+F1 --> G1[Smooth Corpus Vectors]
+
+G1 --> H1[Interpolation Points]
+G1 --> I1[Semantic Density Mapping]
+H1 --> I1
+I1 --> J1[Density Map]
+J1 --> L1[Adaptive Chunking]
+
+L1 --> K1
+K1 --> M1[Search Results with Sentiment]
+
+M1 --> N1((Final Output))
 
 subgraph Input
-A((A)):::input1
+A1((Text File))
+A2((Query))
 end
 
 subgraph Preprocess
-B((B)):::process
-C((C)):::process
+B1[Preprocess and Chunk]
 end
 
-subgraph TrainWord2Vec
-D((D)):::process
+subgraph Word2Vec
+C1[Train Word2Vec]
+E1[Corpus Vectors]
 end
 
-subgraph AnalyzeSentiment
-E((E)):::process
+subgraph Sentiment
+D1[Analyze Sentiment]
 end
 
-subgraph SmoothVectors
-F((F)):::process
-G((G)):::process
-H((H)):::process
+subgraph Smooth
+F1[Smooth Vectors]
+G1[Smooth Corpus Vectors]
 end
 
-subgraph SemanticSearch
-I((I)):::process
+subgraph Density
+H1[Interpolation Points]
+I1[Semantic Density Mapping]
+J1[Density Map]
 end
 
-subgraph DensityMapping
-J((J)):::process
-K((K)):::process
+subgraph Adaptive
+L1[Adaptive Chunking]
 end
 
-subgraph AdaptiveChunking
-L((L)):::process
+subgraph Search
+K1[Semantic Search]
+M1[Search Results with Sentiment]
 end
 
 subgraph Output
-M((M)):::output
-N((N)):::output
-O((O)):::output
+N1((Final Output))
 end
 
-subgraph "Parameter Space"
-P((P)):::params --> B((B))
-Q((Q)):::params --> C((C))
-R((R)):::params --> D((D))
-S((S)):::params --> E((E))
-T((T)):::params --> F((F))
-U((U)):::params --> G((G))
-V((V)):::params --> H((H))
-W((W)):::params --> I((I))
-X((X)):::params --> J((J))
-Y((Y)):::params --> K((K))
-Z((Z)):::params --> L((L))
-end
-
-classDef input1 fill:#f9f,stroke:#333,stroke-width:4px;
-classDef process fill:#ff9,stroke:#333,stroke-width:4px;
-classDef output fill:#9f9,stroke:#333,stroke-width:4px;
-classDef params fill:#f99,stroke:#333,stroke-width:4px;
 
 ```
