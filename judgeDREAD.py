@@ -1,11 +1,16 @@
+# v 02
+# to use from teh commandline 
+# python judgeDREAD.py path_to_your_input_json_file.json --threshold 0.75
+
 import json
 import datetime
+import argparse
 
 def parse_context_to_messages(context):
     """
     Parse the context string into a list of messages, each with a relevance score and sentiment.
     """
-    chunks = context.split("\n\n")  # Split the context into chunks
+    chunks = context.split("\n\n")
     messages = []
     for chunk in chunks:
         if chunk:
@@ -19,9 +24,8 @@ def parse_context_to_messages(context):
 def calculate_weight(relevance, sentiment):
     """
     Calculate a weight for the message based on relevance and sentiment.
-    This is a placeholder function; adjust the calculation logic as needed.
     """
-    return relevance * (1 + sentiment)  # simplistic weighting formula
+    return relevance * (1 + sentiment)
 
 def format_query_with_context(query, context):
     """
@@ -53,7 +57,6 @@ def filter_and_convert_messages(data, threshold):
             if weight < threshold:
                 rejected_data.append({"query": formatted_query, "context": full_context, "question": item['question'], "answer": item['answer']})
             else:
-                # Append formatted user question and assistant answer
                 messages.append({"role": "user", "content": formatted_query})
                 messages.append({"role": "assistant", "content": item['answer']})
         if messages:
@@ -68,30 +71,34 @@ def save_jsonl_data(data, file_path):
     with open(file_path, 'w') as file:
         for entry in data:
             json.dump(entry, file)
-            file.write('\n')  # Ensures proper JSONL format with each JSON object on a new line
+            file.write('\n')
 
 def save_json_data(data, file_path):
     with open(file_path, 'w') as file:
         file.write(json.dumps(data, indent=4))
-        file.write('\n')  # Adds a newline at the end of the file for better readability
+        file.write('\n')
 
-if __name__ == "__main__":
-    input_file = 'generatedPROPHETISSA_dataset.json'
+def main(input_file, threshold):
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     output_file = timestamp + input_file.replace('.json', '_pass.jsonl')
     rejected_file = timestamp + input_file.replace('.json', '_fail.jsonl')
-    threshold = 0.75  # Define your own threshold based on relevance * (1 + sentiment)
 
     data = load_json_data(input_file)
     accepted_data, rejected_data = filter_and_convert_messages(data, threshold)
 
-    # Save the data that meets the threshold to a JSONL file
+    # Save the data that meets the threshold
     save_jsonl_data(accepted_data, output_file)
     save_json_data(accepted_data, timestamp + input_file.replace('.json', '_pass.json'))
     print(f"Data that meets the threshold is converted and saved to {output_file}")
 
-    # Save the data that does not meet the threshold to a JSON file
+    # Save the data that does not meet the threshold
     save_jsonl_data(rejected_data, rejected_file)
     save_json_data(rejected_data, timestamp + input_file.replace('.json', '_fail.json'))
     print(f"Data below the threshold is saved to {rejected_file}")
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Process input JSON for threshold filtering.")
+    parser.add_argument("input_file", type=str, help="The path to the input JSON file.")
+    parser.add_argument("--threshold", type=float, default=0.75, help="Weight threshold for filtering entries (default: 0.75).")
+    args = parser.parse_args()
+    main(args.input_file, args.threshold)
