@@ -3,8 +3,10 @@
 
 RAG dataset generator using **ollama**. 
 
-features
+features:
+
 **hybrid25SEARCH** a nomic embedding model with cosine and bm25 search
+
 **densefeelSEARCH** a lighter weight buzzier w2v implementation 
 
 This script performs a semantic search on input data, generates context-based questions and then answers, and saves the results in a JSON file, providing an automated way to generate a grounded dataset for finetuning. Currently only using .txt for the injests as proof of concept.
