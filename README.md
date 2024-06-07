@@ -6,7 +6,7 @@ RAG dataset generator using **ollama** and **densefeelSEARCH**. This script perf
 TO RUN:
 -------
 ```
-python prophetissa.py --file_path "corpus.txt" --seed_queries_file "seedcorpus_nl_divided.txt" --output_file "dataset.json"
+python prophetissa.py --file_path "corpus.txt" --seed_queries_file "seedcorpus.txt" --output_file "dataset.json"
 ```
 
 OUTPUT SCHEMA:
