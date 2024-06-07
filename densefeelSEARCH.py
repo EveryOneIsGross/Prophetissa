@@ -1,6 +1,5 @@
+# ver 07
 import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-
 import numpy as np
 from gensim.models import Word2Vec
 import logging
@@ -11,6 +10,7 @@ from sklearn.neighbors import KernelDensity
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 class Config:
     def __init__(self, topk_results=16, max_tokens=128):
