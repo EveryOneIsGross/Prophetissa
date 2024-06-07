@@ -1,7 +1,11 @@
 # Prophetissa
+-------------
+
 RAG dataset generator using ollama and emo vector search.
 Currently only using .txt for the injests as proof of concept.
 
+OUTPUT SCHEMA:
+--------------
 ```json
 {
   "query": "Placeholder for the query description about the topic.",
