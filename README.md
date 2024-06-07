@@ -74,7 +74,7 @@ FLOW:
 DEPENDENCIES:
 -------------
 ```
-python version: whatever you probably don't have installed
+python - whatever ver. you p don't have installed
 warnings
 numpy
 sklearn
