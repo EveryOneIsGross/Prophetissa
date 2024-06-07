@@ -1,9 +1,16 @@
-# v 06
+# v 07
 import json
 import argparse
 from openai import OpenAI
-#from xifSEARCH_07 import main, Config
-from hybrid25SEARCH import main, Config
+import re
+from densefeelSEARCH import main, Config
+#from hybrid25SEARCH import main, Config
+
+TOPK = 8
+MAXTOKENS = 128
+QUESTIONMODEL = "qwen2:0.5b-instruct-fp16"
+ANSWERMODEL = "qwen2:0.5b-instruct-fp16"
+
 
 # Initialize the OpenAI client
 client = OpenAI(
@@ -22,7 +29,7 @@ questions based on the context. The questions should be diverse in nature across
 document. Restrict the questions to the context information provided. Each question should be a single sentence ending with a question mark or a newline character.
 """
     response = client.chat.completions.create(
-        model="PHRASE-2:latest",
+        model=QUESTIONMODEL,
         messages=[
             {"role": "system", "content": "You are a curious assistant."},
             {"role": "user", "content": prompt}
@@ -31,6 +38,8 @@ document. Restrict the questions to the context information provided. Each quest
     generated_text = response.choices[0].message.content.strip()
     generated_questions = [q.strip() for q in generated_text.replace('?', '?\n').split('\n') if q.strip()]
     generated_questions = [q + '?' if not q.endswith('?') else q for q in generated_questions]
+    # remove number bullet points numerals followed by a dot
+    generated_questions = [re.sub(r'^\d+\.', '', q) for q in generated_questions]
     # remove leading characters and spaces before the first Capital letter in the question if available otheriwse next letter
     generated_questions = [q[q.find(q[0]):] for q in generated_questions] 
      
@@ -51,7 +60,7 @@ Query: {question}
 Answer:
 """
     response = client.chat.completions.create(
-        model="qwen2:0.5b-instruct-fp16",
+        model=ANSWERMODEL,
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt}
@@ -79,7 +88,7 @@ def save_json_data(file_path, data):
 
 def process_search_results(file_path, query, output_file):
     # Define the configuration for your search engine
-    searchCONFIG = Config(topk_results=4, max_tokens=256)
+    searchCONFIG = Config(topk_results=TOPK, max_tokens=MAXTOKENS)
 
     # Perform semantic search using your search engine
     search_results = main(file_path, query, searchCONFIG)
@@ -110,7 +119,7 @@ def process_search_results(file_path, query, output_file):
     num_questions = 3  # Specify the number of questions to generate
     questions = generate_questions(context, num_questions)
 
-    # Generate answers for each question
+    # Generate answers for each question and save the results
     for question in questions:
         answer = generate_answer(context, question)
         result = {
@@ -122,10 +131,12 @@ def process_search_results(file_path, query, output_file):
             "answer": answer            
         }
         existing_data.append(result)
+        save_json_data(output_file, existing_data)
+        print(f"Search results saved to {output_file}")
 
     # Save the updated JSON data back to the output file
-    save_json_data(output_file, existing_data)
-    print(f"Search results saved to {output_file}")
+    # save_json_data(output_file, existing_data)
+    # print(f"Search results saved to {output_file}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process some search results.')
