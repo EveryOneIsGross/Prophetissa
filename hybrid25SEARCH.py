@@ -1,3 +1,5 @@
+# v 01
+
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
@@ -67,7 +69,8 @@ def semantic_search_with_bm25(embeddings, query_embedding, chunks, top_k, query)
 
     for i, j in zip(*X.nonzero()):
         bm25_scores[i] += compute_bm25(X[i, j], np.log((total_docs - np.sum(X[:, j] > 0) + 0.5) / (np.sum(X[:, j] > 0) + 0.5)), total_docs, doc_lengths[i, 0], avg_dl)
-
+    # convert bm25 scores to a probability distribution
+    bm25_scores = np.exp(bm25_scores) / np.sum(np.exp(bm25_scores))
     cosine_scores = cosine_similarity([query_embedding], embeddings).flatten()
     final_scores = bm25_scores * cosine_scores
 
