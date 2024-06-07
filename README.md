@@ -5,14 +5,11 @@ RAG dataset generator using **ollama** and **densefeelSEARCH**. This script perf
 
 TO RUN:
 -------
-
 ```
-python prophetissa.py --file_path "corpus.txt" --seed_queries_file "seedcorpus.txt" --output_file "dataset.json"
-```
-*
-'seedcorpus' is delimited by new lines, so ensure each "domain topic statements" or "queries" are each on a new line.
+~ensure yr seedcorpus.txt is formatted with items on new lines~
 
-'deepfeelSEARCH' will only return available matches, n results will vary based on returned chunks. set the top k limit within the main py.
+> python prophetissa.py --file_path "corpus.txt" --seed_queries_file "seedcorpus.txt" --output_file "dataset.json"
+```
 
 OUTPUT SCHEMA:
 --------------
