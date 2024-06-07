@@ -90,6 +90,7 @@ uses fine tuning prompt template from : [mistral ft guide](https://github.com/mi
 uses densefeelsSEARCH for retrieval.
 uses ollama for inference. 
 
+The below graphs only sort of make sense, but opus is in cooldown for me and chatgpt can't graph for ****
 
 HOW DENSEFEELSEACH WORKS:
 -------------------------
@@ -102,25 +103,25 @@ HOW DENSEFEELSEACH WORKS:
                                +-----v------+
                                | Preprocess |
                                |  & Chunk   |
-                               +-----+------+
-                                     |
-                                     v
-+------------------+          +-----+------+           +-------------------+
+                               +------------+----------+
+                                                       |
+                                                       |
++------------------+          +------------+           +-------------------+
 | Query            |          | Semantic   |           | Train Word2Vec    |
 |                  +--------->+ Search     +--------+  |                   |
 | (A2)             |          | (K1)       |        |  +-------------------+
 +------------------+          +------------+        |              |
-                                                      v              v
+                                                    v              v
                                        +-------------+------+     +--+---------------+
                                        | Analyze            |     | Corpus           |
                                        | Sentiment (D1)     |     | Vectors (E1)     |
                                        +----------+---------+     +---------+--------+
                                                   |                           |
                                                   v                           v
-                                      +-----------+-----------+ +-------------+-----+
+                                      +-----------+-----------+-+-------------+-----+
                                       | Smooth Vectors (F1)   | | Smooth            |
                                       |                       | | Corpus Vectors    |
-                                      +-----------+-----------+ +---------+--------+
+                                      +-----------+-----------+ +---------+---------+
                                                   |                           |
                                                   v                           v
                                     +-------------+-------------+ +------------+--------------+
@@ -133,16 +134,16 @@ HOW DENSEFEELSEACH WORKS:
                                                                 |
                                                                 v
                                                +----------------+---------------+
-                                               | Density Map (J1)              |
+                                               | Density Map (J1)               |
                                                +----------------+---------------+
                                                                 |
                                                                 v
-                                               +----------------+---------------+
+                                               +----------------+--------------+
                                                | Adaptive Chunking (L1)        |
                                                +-------------------------------+
                                                                 |
                                                                 v
-                                               +----------------+---------------+
+                                               +----------------+--------------+
                                                | Final Output:                 |
                                                | Search Results with Sentiment |
                                                +-------------------------------+
