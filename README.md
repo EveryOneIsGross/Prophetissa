@@ -22,12 +22,22 @@ TO RUN:
 OUTPUT SCHEMA:
 --------------
 ```json
-{
-  "query": "Placeholder for the query description about the topic.",
-  "context": "Chunk: Brief summary of an important point or argument from the text.\nRelevance Score: 0.9999999\nSentiment: 0.1234567\n\nChunk: Summary of another relevant point or aspect discussed in the text.\nRelevance Score: 0.9999998\nSentiment: 0.2345678\n\nChunk: Summary of a third point, possibly touching on another dimension of the topic.\nRelevance Score: 0.9999997\nSentiment: 0.3456789\n\nChunk: Additional information or a concluding thought from the text.\nRelevance Score: 0.9999996\nSentiment: 0.4567890\n\n",
-  "question": "X. What is the impact or influence of [topic] in [context or field]?",
-  "answer": "The impact of [topic] in [context or field] is significant because it enables [explain key benefits or outcomes]. This may include changes in [mention any potential transformations or effects], leading to [describe possible consequences or improvements]."
-}
+[
+  {
+    "query": "string",
+    "context": "string",
+    "chunks": [
+      {
+        "text": "string",
+        "relevance_score": "number",
+        "sentiment": "number"
+      }
+    ],
+    "combined_score": "number",
+    "question": "string",
+    "answer": "string"
+  }
+]
 
 ```
 FLOW:
