@@ -3,6 +3,12 @@
 
 RAG dataset generator using **ollama** and **densefeelSEARCH**. This script performs a semantic search on input data, generates context-based questions and then answers, and saves the results in a JSON file, providing an automated way to generate a grounded dataset for finetuning. Currently only using .txt for the injests as proof of concept.
 
+TO RUN:
+-------
+```
+python prophetissa.py --file_path "corpus.txt" --seed_queries_file "seedcorpus_nl_divided.txt" --output_file "dataset.json"
+```
+
 OUTPUT SCHEMA:
 --------------
 ```json
