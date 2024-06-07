@@ -15,7 +15,8 @@ OUTPUT SCHEMA:
 }
 
 ```
-
+FLOW:
+-----
 ```
 +--------------------------------------------------------------------------------+
 | Code Overview:                                                                 |
@@ -69,11 +70,28 @@ OUTPUT SCHEMA:
 |                                                                                |
 +--------------------------------------------------------------------------------+
 ```
----
 
+DEPENDENCIES:
+-------------
+```
+warnings
+numpy
+sklearn
+logging
+pickle
+gensim
+os
+textblob
+openai
+json
+```
 uses fine tuning prompt template from : [mistral ft guide](https://github.com/mistralai/mistral-finetune)
 uses densefeelsSEARCH for retrieval.
+uses ollama for inference. 
 
+
+HOW DENSEFEELSEACH WORKS:
+-------------------------
 ```
                                +------------+
                                | Text File  |
