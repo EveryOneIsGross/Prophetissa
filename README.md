@@ -99,8 +99,8 @@ L1 --> N1[Generate Questions]
 N1 --> O1[Generate Answers]
 O1 --> P1[Load JSON Data]
 O1 --> Q1[Save JSON Data]
-P1 --> R1[Main Execution Flow]
-Q1 --> R1
+P1 <--> R1[Main Execution Flow]
+Q1 <--> R1
 R1 --> S((Final Output: Training Dataset))
 
 subgraph Preprocessing
@@ -150,6 +150,7 @@ subgraph ExecutionFlow
 R1[Main Execution Flow]
 S((Final Output: Training Dataset))
 end
+
 ```
 
 
