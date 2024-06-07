@@ -1,0 +1,122 @@
+import json
+from openai import OpenAI
+from xifSEARCH_07 import main, Config
+
+# Initialize the OpenAI client
+client = OpenAI(
+    base_url='http://localhost:11434/v1',
+    api_key='ollama',  # required, but unused
+)
+
+def generate_questions(context, num_questions):
+    prompt = f"""
+Context information is below.
+---------------------
+{context}
+---------------------
+Given the context information and not prior knowledge, generate {num_questions}
+questions based on the context. The questions should be diverse in nature across the
+document. Restrict the questions to the context information provided. Each question should be a single sentence ending with a question mark or a newline character.
+"""
+    response = client.chat.completions.create(
+        model="qwen2:0.5b-instruct-fp16",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    generated_text = response.choices[0].message.content.strip()
+    generated_questions = [q.strip() for q in generated_text.replace('?', '?\n').split('\n') if q.strip()]
+    generated_questions = [q + '?' if not q.endswith('?') else q for q in generated_questions]
+    print(prompt)
+    print(generated_questions[0:3])
+    # return only 3 questions
+    return generated_questions[0:3]
+
+def generate_answer(context, question):
+    prompt = f"""
+Context information is below
+---------------------
+{context}
+---------------------
+Given the context information and not prior knowledge,
+answer the query.
+Query: {question}
+Answer:
+"""
+    response = client.chat.completions.create(
+        model="qwen2:0.5b-instruct-fp16",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    generated_answer = response.choices[0].message.content.strip()
+    print(prompt)
+    print(generated_answer)
+    return generated_answer
+
+def load_json_data(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []
+
+def save_json_data(file_path, data):
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=2)
+
+def process_search_results(file_path, query, output_file):
+    # Define the configuration for your search engine
+    searchCONFIG = Config(topk_results=4, max_tokens=64)
+
+    # Perform semantic search using your search engine
+    search_results = main(file_path, query, searchCONFIG)
+
+    # Skip generation if the search results are empty
+    if not search_results:
+        print(f"No search results found for query: {query}")
+        return
+
+    # Load existing JSON data from the output file
+    existing_data = load_json_data(output_file)
+
+    # Accumulate all search results into a single context
+    context = ""
+    for chunk, relevance_score, sentiment in search_results:
+        formatted_chunk = f"Chunk: {chunk}\nRelevance Score: {relevance_score}\nSentiment: {sentiment}\n\n"
+        context += formatted_chunk
+
+    # Generate questions based on the accumulated context
+    num_questions = 3  # Specify the number of questions to generate
+    questions = generate_questions(context, num_questions)
+
+    # Generate answers for each question
+    for question in questions:
+        answer = generate_answer(context, question)
+        result = {
+            "query": query,
+            "context": context,
+            "question": question,
+            "answer": answer
+        }
+        existing_data.append(result)
+
+    # Save the updated JSON data back to the output file
+    save_json_data(output_file, existing_data)
+    print(f"Search results saved to {output_file}")
+
+if __name__ == "__main__":
+    # Provide the path to your data file, the seed queries file, and the output file
+    file_path = "INPUT_PROMPTS\conorSUX.txt"
+    seed_queries_file = "seedcorpus.txt"
+    output_file = "AIandDOOMed.json"
+
+    # Read the seed queries from the file
+    with open(seed_queries_file, 'r') as file:
+        seed_queries = file.read().splitlines()
+
+    # Process each seed query
+    for query in seed_queries:
+        process_search_results(file_path, query, output_file)
