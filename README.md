@@ -91,46 +91,30 @@ uses densefeelsSEARCH for retrieval.
 uses ollama for inference. 
 
 
-HOW DENSEFEELSEACH WORKS:
+HOW densefeelSEARCH WORKS:
 -------------------------
 
 The script provided outlines a comprehensive text analysis pipeline that integrates various natural language processing (NLP) techniques. It starts with preprocessing text, trains a Word2Vec model for semantic representation, uses sentiment analysis, performs semantic density mapping, and adapts text chunking accordingly, eventually utilizing these processed chunks for semantic search. Here’s how each component works together and influences the final search results:
 
-### Flow and Interaction of Components:
+1. The script reads a text file, preprocesses it by dividing the text into manageable chunks based on sentence boundaries or fallbacks to fixed word counts if no sentences are detected. This initial chunking is critical as it sets the base units of text that will be further processed and analyzed.
 
-1. **Preprocessing and Chunking:**
-   - The script reads a text file, preprocesses it by dividing the text into manageable chunks based on sentence boundaries or fallbacks to fixed word counts if no sentences are detected. This initial chunking is critical as it sets the base units of text that will be further processed and analyzed.
+2. These chunks are then used to train a Word2Vec model. This model learns semantic representations of words based on their contextual usage in the chunks, producing vectors that capture the meanings of words and phrases.
 
-2. **Training Word2Vec:**
-   - These chunks are then used to train a Word2Vec model. This model learns semantic representations of words based on their contextual usage in the chunks, producing vectors that capture the meanings of words and phrases.
+3. Each chunk is analyzed for sentiment using TextBlob, which assigns a polarity score reflecting the emotional tone of the text in each chunk. This sentiment data is used later in the adaptive chunking process.
 
-3. **Sentiment Analysis:**
-   - Each chunk is analyzed for sentiment using TextBlob, which assigns a polarity score reflecting the emotional tone of the text in each chunk. This sentiment data is used later in the adaptive chunking process.
+4. Parallel to sentiment analysis, the corpus vectors (derived from Word2Vec) of each chunk are used to generate a semantic density map via kernel density estimation. This map indicates areas of high and low semantic concentration across the corpus, which can guide the adaptive chunking process.
 
-4. **Semantic Density Mapping:**
-   - Parallel to sentiment analysis, the corpus vectors (derived from Word2Vec) of each chunk are used to generate a semantic density map via kernel density estimation. This map indicates areas of high and low semantic concentration across the corpus, which can guide the adaptive chunking process.
+5. Chunks are then dynamically adjusted based on several factors:
+- **Size constraints** (minimum and maximum sizes for chunks)
+- **Sentiment shifts** (changes in sentiment that exceed a predefined threshold)
+- **Semantic density changes** (fluctuations in semantic density that surpass a set threshold, derived from the density map)
+This process ensures that each chunk is informationally coherent and contextually complete, which is crucial for maintaining the integrity of semantic analysis.
 
-5. **Adaptive Chunking:**
-   - Chunks are then dynamically adjusted based on several factors:
-     - **Size constraints** (minimum and maximum sizes for chunks)
-     - **Sentiment shifts** (changes in sentiment that exceed a predefined threshold)
-     - **Semantic density changes** (fluctuations in semantic density that surpass a set threshold, derived from the density map)
-   - This process ensures that each chunk is informationally coherent and contextually complete, which is crucial for maintaining the integrity of semantic analysis.
+6. Once the adaptive chunks are finalized, a semantic search is conducted for a given query. The search leverages the Word2Vec model to find chunks that semantically align with the query by comparing vector similarities. Chunks are ranked based on their cosine similarity to the query vector, and the top results are selected based on configuration settings (top-k results).
 
-6. **Semantic Search:**
-   - Once the adaptive chunks are finalized, a semantic search is conducted for a given query. The search leverages the Word2Vec model to find chunks that semantically align with the query by comparing vector similarities.
-   - Chunks are ranked based on their cosine similarity to the query vector, and the top results are selected based on configuration settings (top-k results).
+7. n Results returned. 
 
-### Impact on Search Results:
-
-- **Quality of Chunks:**
-  - Because chunks are adapted based on sentiment and semantic density, they are likely to be more topically coherent and contextually relevant. This quality directly enhances the efficacy of semantic searches since the search algorithm can operate on chunks that accurately represent distinct ideas or themes.
-
-- **Relevance of Results:**
-  - Adaptive chunking, influenced by semantic density and sentiment, ensures that the text chunks used in the search are optimally configured to respond to the query. This leads to results that are not only relevant but also rich in contextual integrity, making them more useful for users.
-
-- **Sentiment-informed Outputs:**
-  - The inclusion of sentiment scores in the search results adds an additional layer of information, allowing users to gauge not just the relevance but also the emotional tone of the content related to their queries.
+Because chunks are adapted based on sentiment and semantic density, they are likely to be more topically coherent and contextually relevant. This quality directly enhances the efficacy of semantic searches since the search algorithm can operate on chunks that accurately represent distinct ideas or themes. Adaptive chunking, influenced by semantic density and sentiment, ensures that the text chunks used in the search are optimally configured to respond to the query. This leads to results that are not only relevant but also rich in contextual integrity, making them more useful for users. The inclusion of sentiment scores in the search results adds an additional layer of information, allowing users to gauge not just the relevance but also the emotional tone of the content related to their queries.
 
 In conclusion, the integration of semantic density mapping into the adaptive chunking process significantly enhances the overall text analysis pipeline by ensuring that the chunks are both semantically and emotionally coherent. This coherence directly influences the quality of the semantic search results, making the system robust for applications requiring nuanced text understanding and retrieval.
 
