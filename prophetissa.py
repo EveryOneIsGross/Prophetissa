@@ -1,3 +1,4 @@
+# ver 04
 import json
 import argparse
 from openai import OpenAI
