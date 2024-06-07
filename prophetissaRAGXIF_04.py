@@ -1,4 +1,5 @@
 import json
+import argparse
 from openai import OpenAI
 from xifSEARCH_07 import main, Config
 
@@ -28,10 +29,7 @@ document. Restrict the questions to the context information provided. Each quest
     generated_text = response.choices[0].message.content.strip()
     generated_questions = [q.strip() for q in generated_text.replace('?', '?\n').split('\n') if q.strip()]
     generated_questions = [q + '?' if not q.endswith('?') else q for q in generated_questions]
-    print(prompt)
-    print(generated_questions[0:3])
-    # return only 3 questions
-    return generated_questions[0:3]
+    return generated_questions[0:3]  # return only 3 questions
 
 def generate_answer(context, question):
     prompt = f"""
@@ -52,8 +50,6 @@ Answer:
         ]
     )
     generated_answer = response.choices[0].message.content.strip()
-    print(prompt)
-    print(generated_answer)
     return generated_answer
 
 def load_json_data(file_path):
@@ -89,8 +85,7 @@ def process_search_results(file_path, query, output_file):
         context += formatted_chunk
 
     # Generate questions based on the accumulated context
-    num_questions = 3  # Specify the number of questions to generate
-    questions = generate_questions(context, num_questions)
+    questions = generate_questions(context, 3)  # Specify the number of questions to generate
 
     # Generate answers for each question
     for question in questions:
@@ -108,15 +103,14 @@ def process_search_results(file_path, query, output_file):
     print(f"Search results saved to {output_file}")
 
 if __name__ == "__main__":
-    # Provide the path to your data file, the seed queries file, and the output file
-    file_path = "INPUT_PROMPTS\conorSUX.txt"
-    seed_queries_file = "seedcorpus.txt"
-    output_file = "AIandDOOMed.json"
+    parser = argparse.ArgumentParser(description='Process some search results.')
+    parser.add_argument('--file_path', type=str, required=True, help='Path to the input data file')
+    parser.add_argument('--seed_queries_file', type=str, required=True, help='Path to the seed queries file')
+    parser.add_argument('--output_file', type=str, required=True, help='Path to the output JSON file')
 
-    # Read the seed queries from the file
-    with open(seed_queries_file, 'r') as file:
+    args = parser.parse_args()
+    with open(args.seed_queries_file, 'r') as file:
         seed_queries = file.read().splitlines()
 
-    # Process each seed query
     for query in seed_queries:
-        process_search_results(file_path, query, output_file)
+        process_search_results(args.file_path, query, args.output_file)
