@@ -1,8 +1,9 @@
-# ver 04
+# v 06
 import json
 import argparse
 from openai import OpenAI
-from densefeelSEARCH import main, Config
+#from xifSEARCH_07 import main, Config
+from hybrid25SEARCH import main, Config
 
 # Initialize the OpenAI client
 client = OpenAI(
@@ -21,16 +22,22 @@ questions based on the context. The questions should be diverse in nature across
 document. Restrict the questions to the context information provided. Each question should be a single sentence ending with a question mark or a newline character.
 """
     response = client.chat.completions.create(
-        model="qwen2:0.5b-instruct-fp16",
+        model="PHRASE-2:latest",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "system", "content": "You are a curious assistant."},
             {"role": "user", "content": prompt}
         ]
     )
     generated_text = response.choices[0].message.content.strip()
     generated_questions = [q.strip() for q in generated_text.replace('?', '?\n').split('\n') if q.strip()]
     generated_questions = [q + '?' if not q.endswith('?') else q for q in generated_questions]
-    return generated_questions[0:3]  # return only 3 questions
+    # remove leading characters and spaces before the first Capital letter in the question if available otheriwse next letter
+    generated_questions = [q[q.find(q[0]):] for q in generated_questions] 
+     
+    print(prompt)
+    print(generated_questions[0:3])
+    # return only 3 questions
+    return generated_questions[0:3]
 
 def generate_answer(context, question):
     prompt = f"""
@@ -51,13 +58,19 @@ Answer:
         ]
     )
     generated_answer = response.choices[0].message.content.strip()
+    print(prompt)
+    print(generated_answer)
     return generated_answer
 
 def load_json_data(file_path):
     try:
         with open(file_path, 'r') as file:
-            return json.load(file)
-    except FileNotFoundError:
+            data = file.read().strip()
+            if data:
+                return json.loads(data)
+            else:
+                return []
+    except (FileNotFoundError, json.JSONDecodeError):
         return []
 
 def save_json_data(file_path, data):
@@ -66,7 +79,7 @@ def save_json_data(file_path, data):
 
 def process_search_results(file_path, query, output_file):
     # Define the configuration for your search engine
-    searchCONFIG = Config(topk_results=4, max_tokens=64)
+    searchCONFIG = Config(topk_results=4, max_tokens=256)
 
     # Perform semantic search using your search engine
     search_results = main(file_path, query, searchCONFIG)
@@ -81,12 +94,21 @@ def process_search_results(file_path, query, output_file):
 
     # Accumulate all search results into a single context
     context = ""
+    chunks = []
+    combined_score = 0
     for chunk, relevance_score, sentiment in search_results:
-        formatted_chunk = f"Chunk: {chunk}\nRelevance Score: {relevance_score}\nSentiment: {sentiment}\n\n"
+        formatted_chunk = f"Chunk: '{chunk}'\nRelevance Score: {relevance_score}\nSentiment: {sentiment}\n\n"
         context += formatted_chunk
+        chunks.append({
+            "text": chunk,
+            "relevance_score": float(relevance_score),  # Convert to regular float
+            "sentiment": sentiment
+        })
+        combined_score += float(relevance_score)  # Convert to regular float
 
     # Generate questions based on the accumulated context
-    questions = generate_questions(context, 3)  # Specify the number of questions to generate
+    num_questions = 3  # Specify the number of questions to generate
+    questions = generate_questions(context, num_questions)
 
     # Generate answers for each question
     for question in questions:
@@ -94,8 +116,10 @@ def process_search_results(file_path, query, output_file):
         result = {
             "query": query,
             "context": context,
+            "chunks": chunks,
+            "combined_score": float(combined_score),  # Convert to regular float
             "question": question,
-            "answer": answer
+            "answer": answer            
         }
         existing_data.append(result)
 
