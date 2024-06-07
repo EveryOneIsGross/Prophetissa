@@ -5,6 +5,10 @@ RAG dataset generator using **ollama** and **densefeelSEARCH**. This script perf
 
 TO RUN:
 -------
+
+seedcorpus is delimited by new lines, so ensure each "domain topic statements" or "queries" are each on a new line.
+deepfeelSEARCH will only return available chunks, and will not return a result for seed searches that don't get a match. cap the top_k and chunk size within the main py.
+
 ```
 python prophetissa.py --file_path "corpus.txt" --seed_queries_file "seedcorpus.txt" --output_file "dataset.json"
 ```
