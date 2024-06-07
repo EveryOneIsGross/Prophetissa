@@ -82,10 +82,12 @@ DEPENDENCIES:
 -------------
 ```
 python - whatever ver. you p don't have installed
+mostly useless imports i neglected to scrub
+
 warnings
+logging
 numpy
 sklearn
-logging
 pickle
 gensim
 os
