@@ -1,7 +1,7 @@
 import json
 import argparse
 from openai import OpenAI
-from xifSEARCH_07 import main, Config
+from densefeelSEARCH import main, Config
 
 # Initialize the OpenAI client
 client = OpenAI(
