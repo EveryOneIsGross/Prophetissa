@@ -1,7 +1,7 @@
 # Prophetissa
 -------------
 
-RAG dataset generator using **ollama**. 
+~RAG~ finetune dataset generator using **ollama**. 
 
 features:
 
@@ -9,7 +9,9 @@ features:
 
 **densefeelSEARCH** a lighter weight buzzier w2v implementation 
 
-This script performs a semantic search on input data, generates context-based questions and then answers, and saves the results in a JSON file, providing an automated way to generate a grounded dataset for finetuning. Currently only using .txt for the injests as proof of concept.
+**judgeDread** to add another llms reasoning weight into the dataset sorting and reformatting for mistral
+
+This script performs a semantic search on input data, generates context-based questions and then their answers, and saves the results in a JSON file, providing an automated way to generate a grounded dataset for finetuning. Currently only using .txt for the injests as proof of concept.
 
 Prompts are formatted ala mistrals cookbook.
 
