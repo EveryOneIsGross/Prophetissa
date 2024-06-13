@@ -1,10 +1,11 @@
 # Prophetissa
 -------------
 
+Prophetissa performs a chosen search on input data, generates context-based questions and then their answers, and saves the results in a JSON file, providing an automated way to generate a grounded dataset for finetuning. 
+
 The main script acts as a central hub, orchestrating the different search methods and processing the results to generate a dataset with questions and answers.
 Each search module follows its own flow for processing the input text, performing search operations, and returning relevant results. The main script then processes these results, formats the context, generates questions and answers, and saves the data to a JSON file.
 
-This script performs a search on input data, generates context-based questions and then their answers, and saves the results in a JSON file, providing an automated way to generate a grounded dataset for finetuning. 
 ```
 ----------------------------------------------------------------------------
 # ATTN:latest search additions have broken schemas for judgeDREAD (wip) 💀☕
@@ -34,19 +35,24 @@ Search Modules:
    - Extracts image filenames and descriptions from the Markdown.
    - Calculates keyword frequency and performs keyword search on the chunks.
    - Appends image descriptions to relevant chunks and calculates relevance scores.
+  
+   PDF md was generated using ['marker'](https://github.com/VikParuchuri/marker)
+   Use 'luna.py' (ollama and moondream) to process generated .md to add image descriptions.
 
-4. wikiSEARCH.py:
+5. wikiSEARCH.py:
    - Fetches Wikipedia pages based on the input query.
    - Preprocesses and chunks the page content.
    - Expands the query using TextBlob, fuzzy matching, WordNet synonyms, and named entity recognition.
    - Analyzes the sentiment and keyword frequency of the page summary.
 
-5. fractalSEARCH.py:
+6. fractalSEARCH.py:
    - Preprocesses and chunks the input text.
    - Trains a Word2Vec model on the chunked text.
    - Performs Mandelbrot chunking based on the query vector and model.
    - Calculates similarities between the query vector and chunk vectors.
    - Returns the top-k most similar chunks with sentiment and relevance scores.
+  
+   You have to provide a 'folder' instead of 'file' when providing paths here, as fractal chunking ingests multiple documents to cluster.
 
 Here's a Mermaid diagram illustrating the flow of the main script and its interaction with the search modules:
 
