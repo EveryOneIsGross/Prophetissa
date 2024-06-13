@@ -1,6 +1,10 @@
 # Prophetissa
 -------------
-Your scripts consist of a main script (prophetissaRAGXIF_28.py) and several search modules (feelSEARCH_09.py, hybrid25SEARCH_14.py, pdfSEARCH_08.py, wikiSEARCH_05.py, and fractalSEARCH_03.py). The main script acts as a central hub, orchestrating the different search methods and processing the results to generate a dataset with questions and answers.
+
+The main script acts as a central hub, orchestrating the different search methods and processing the results to generate a dataset with questions and answers.
+Each search module follows its own flow for processing the input text, performing search operations, and returning relevant results. The main script then processes these results, formats the context, generates questions and answers, and saves the data to a JSON file.
+
+This script performs a search on input data, generates context-based questions and then their answers, and saves the results in a JSON file, providing an automated way to generate a grounded dataset for finetuning. 
 
 Prophetissa (prophetissa.py):
 1. Loads the configuration and initializes the OpenAI client.
@@ -42,6 +46,7 @@ Search Modules:
 Here's a Mermaid diagram illustrating the flow of the main script and its interaction with the search modules:
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffaa00', 'primaryTextColor': '#ffaa00', 'primaryBorderColor': '#ffaa00', 'lineColor': '#ffaa00', 'secondaryColor': '#ffaa00', 'tertiaryColor': '#ffaa00', 'clusterBkg': 'none', 'clusterBorder': 'none', 'fontSize': '0px'}}}%%
 graph TD
     A[Main Script] --> B{Search Tool}
     B --> C{hybrid}
@@ -49,11 +54,11 @@ graph TD
     B --> E{pdf2md}
     B --> F{wikisearch}
     B --> G{fractal}
-    C --> H[hybrid25SEARCH_14]
-    D --> I[feelSEARCH_09]
-    E --> J[pdfSEARCH_08]
-    F --> K[wikiSEARCH_05]
-    G --> L[fractalSEARCH_03]
+    C --> H[hybrid25SEARCH]
+    D --> I[feelSEARCH]
+    E --> J[pdfSEARCH]
+    F --> K[wikiSEARCH]
+    G --> L[fractalSEARCH]
     H --> M[Process Search Results]
     I --> M
     J --> M
@@ -64,10 +69,6 @@ graph TD
     O --> P[Generate Answers]
     P --> Q[Save to JSON]
 ```
-
-Each search module follows its own flow for processing the input text, performing search operations, and returning relevant results. The main script then processes these results, formats the context, generates questions and answers, and saves the data to a JSON file.
-
-This script performs a semantic search on input data, generates context-based questions and then their answers, and saves the results in a JSON file, providing an automated way to generate a grounded dataset for finetuning. Currently only using .txt for the injests as proof of concept.
 
 Prompts are formatted ala mistrals cookbook.
 ~~
