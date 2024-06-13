@@ -1,16 +1,71 @@
 # Prophetissa
 -------------
+Your scripts consist of a main script (prophetissaRAGXIF_28.py) and several search modules (feelSEARCH_09.py, hybrid25SEARCH_14.py, pdfSEARCH_08.py, wikiSEARCH_05.py, and fractalSEARCH_03.py). The main script acts as a central hub, orchestrating the different search methods and processing the results to generate a dataset with questions and answers.
 
+Prophetissa (prophetissa.py):
+1. Loads the configuration and initializes the OpenAI client.
+2. Defines utility functions for citation insertion, question generation, answer generation, and JSON data handling.
+3. Processes search results based on the selected search tool (hybrid, feels, pdf2md, wikisearch, or fractal).
+4. Formats the search results, generates questions and answers, and saves the data to a JSON file.
 
-~~RAG finetune dataset generator using **ollama**. 
+Search Modules:
+1. feelSEARCH.py:
+   - Preprocesses and chunks the input text.
+   - Trains a Word2Vec model on the chunked text.
+   - Performs sentiment analysis and semantic search using the trained model.
+   - Adapts the chunk size based on sentiment and semantic density.
 
-features:
+2. hybrid25SEARCH.py:
+   - Splits the input text into sentences and embeds them using the Embed4All model.
+   - Dynamically chunks the sentences based on the specified chunk size and threshold.
+   - Performs semantic search with BM25 scoring, combining cosine similarity and BM25 scores.
 
-**hybrid25SEARCH** a nomic embedding model with cosine and bm25 search
+3. pdfSEARCH.py:
+   - Splits the input Markdown text into chunks based on pages, paragraphs, and sentences.
+   - Extracts image filenames and descriptions from the Markdown.
+   - Calculates keyword frequency and performs keyword search on the chunks.
+   - Appends image descriptions to relevant chunks and calculates relevance scores.
 
-**densefeelSEARCH** a lighter weight buzzier w2v implementation 
+4. wikiSEARCH.py:
+   - Fetches Wikipedia pages based on the input query.
+   - Preprocesses and chunks the page content.
+   - Expands the query using TextBlob, fuzzy matching, WordNet synonyms, and named entity recognition.
+   - Analyzes the sentiment and keyword frequency of the page summary.
 
-**judgeDread** to add another llms reasoning weight into the dataset sorting and reformatting for mistral
+5. fractalSEARCH.py:
+   - Preprocesses and chunks the input text.
+   - Trains a Word2Vec model on the chunked text.
+   - Performs Mandelbrot chunking based on the query vector and model.
+   - Calculates similarities between the query vector and chunk vectors.
+   - Returns the top-k most similar chunks with sentiment and relevance scores.
+
+Here's a Mermaid diagram illustrating the flow of the main script and its interaction with the search modules:
+
+```mermaid
+graph TD
+    A[Main Script] --> B{Search Tool}
+    B --> C{hybrid}
+    B --> D{feels}
+    B --> E{pdf2md}
+    B --> F{wikisearch}
+    B --> G{fractal}
+    C --> H[hybrid25SEARCH_14]
+    D --> I[feelSEARCH_09]
+    E --> J[pdfSEARCH_08]
+    F --> K[wikiSEARCH_05]
+    G --> L[fractalSEARCH_03]
+    H --> M[Process Search Results]
+    I --> M
+    J --> M
+    K --> M
+    L --> M
+    M --> N[Format Context]
+    N --> O[Generate Questions]
+    O --> P[Generate Answers]
+    P --> Q[Save to JSON]
+```
+
+Each search module follows its own flow for processing the input text, performing search operations, and returning relevant results. The main script then processes these results, formats the context, generates questions and answers, and saves the data to a JSON file.
 
 This script performs a semantic search on input data, generates context-based questions and then their answers, and saves the results in a JSON file, providing an automated way to generate a grounded dataset for finetuning. Currently only using .txt for the injests as proof of concept.
 
