@@ -1,9 +1,8 @@
 # Prophetissa
 -------------
 
-Prophetissa performs a chosen 'domain seed' on input data, generates context-based questions and then their answers, and saves the results in a JSON file, providing an automated way to generate a grounded dataset for finetuning. 
+Prophetissa is an automated dataset generation tool designed to facilitate fine-tuning of AI models. It operates by taking input text and processing it through multiple search modules, each employing different techniques for text chunking, semantic search, and sentiment analysis. These search methods include hybrid, feel, PDF, wiki, and fractal search. The main script acts as a central coordinator, processing the results from these search modules, generating questions and answers based on the context, and saving the output in a structured JSON format. This pipeline ensures the generation of high-quality, contextually rich datasets suitable for training and fine-tuning AI models.
 
-The main script acts as a central hub, orchestrating the different search methods and processing the results to generate a dataset with questions and answers.
 Each search module follows its own flow for processing the input text, performing search operations, and returning relevant results. The main script then processes these results, formats the context, generates questions and answers, and saves the data to a JSON file.
 
 ```
