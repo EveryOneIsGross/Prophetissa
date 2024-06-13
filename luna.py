@@ -1,3 +1,5 @@
+# v 01
+
 import os
 import re
 import ollama
