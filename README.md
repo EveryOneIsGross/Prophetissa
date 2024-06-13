@@ -218,81 +218,7 @@ FLOW:
 |                                                                                |
 +--------------------------------------------------------------------------------+
 ```
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffaa00', 'primaryTextColor': '#000000', 'primaryBorderColor': '#ffaa00', 'lineColor': '#ffaa00', 'secondaryColor': '#ffaa00', 'tertiaryColor': '#ffaa00', 'clusterBkg': 'none', 'clusterBorder': 'none', 'fontSize': '20px'}}}%%
-graph TD
-A((Input: Queries and Corpus)) --> B1[Preprocess and Chunk]
-B1 --> C1[Train Word2Vec]
-B1 --> D1[Analyze Sentiment]
-C1 --> E1[Corpus Vectors]
-D1 --> E1
-E1 --> F1[Smooth Vectors]
-F1 --> G1[Smooth Corpus Vectors]
-G1 --> H1[Interpolation Points]
-G1 --> I1[Semantic Density Mapping]
-H1 --> I1
-I1 --> J1[Density Map]
-J1 --> K1[Adaptive Chunking]
-K1 --> L1[Adaptive Chunks]
-A --> M1[Process Search Results]
-M1 --> L1
-L1 --> N1[Generate Questions]
-N1 --> O1[Generate Answers]
-O1 --> P1[Load JSON Data]
-O1 --> Q1[Save JSON Data]
-P1 <--> R1[Main Execution Flow]
-Q1 <--> R1
-R1 --> S((Final Output: Training Dataset))
 
-subgraph Preprocessing
-B1[Preprocess and Chunk]
-end
-
-subgraph Word2Vec
-C1[Train Word2Vec]
-E1[Corpus Vectors]
-end
-
-subgraph SentimentAnalysis
-D1[Analyze Sentiment]
-end
-
-subgraph Smoothing
-F1[Smooth Vectors]
-G1[Smooth Corpus Vectors]
-end
-
-subgraph DensityMapping
-H1[Interpolation Points]
-I1[Semantic Density Mapping]
-J1[Density Map]
-end
-
-subgraph AdaptiveChunking
-K1[Adaptive Chunking]
-L1[Adaptive Chunks]
-end
-
-subgraph Search
-M1[Process Search Results]
-end
-
-subgraph GenerateData
-N1[Generate Questions]
-O1[Generate Answers]
-end
-
-subgraph JSONHandling
-P1[Load JSON Data]
-Q1[Save JSON Data]
-end
-
-subgraph ExecutionFlow
-R1[Main Execution Flow]
-S((Final Output: Training Dataset))
-end
-
-```
 
 
 DEPENDENCIES:
@@ -398,5 +324,80 @@ The below graphs only sort of make sense, but opus is in cooldown for me and cha
                                                | Final Output:                 |
                                                | Search Results with Sentiment |
                                                +-------------------------------+
+
+```
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffaa00', 'primaryTextColor': '#000000', 'primaryBorderColor': '#ffaa00', 'lineColor': '#ffaa00', 'secondaryColor': '#ffaa00', 'tertiaryColor': '#ffaa00', 'clusterBkg': 'none', 'clusterBorder': 'none', 'fontSize': '20px'}}}%%
+graph TD
+A((Input: Queries and Corpus)) --> B1[Preprocess and Chunk]
+B1 --> C1[Train Word2Vec]
+B1 --> D1[Analyze Sentiment]
+C1 --> E1[Corpus Vectors]
+D1 --> E1
+E1 --> F1[Smooth Vectors]
+F1 --> G1[Smooth Corpus Vectors]
+G1 --> H1[Interpolation Points]
+G1 --> I1[Semantic Density Mapping]
+H1 --> I1
+I1 --> J1[Density Map]
+J1 --> K1[Adaptive Chunking]
+K1 --> L1[Adaptive Chunks]
+A --> M1[Process Search Results]
+M1 --> L1
+L1 --> N1[Generate Questions]
+N1 --> O1[Generate Answers]
+O1 --> P1[Load JSON Data]
+O1 --> Q1[Save JSON Data]
+P1 <--> R1[Main Execution Flow]
+Q1 <--> R1
+R1 --> S((Final Output: Training Dataset))
+
+subgraph Preprocessing
+B1[Preprocess and Chunk]
+end
+
+subgraph Word2Vec
+C1[Train Word2Vec]
+E1[Corpus Vectors]
+end
+
+subgraph SentimentAnalysis
+D1[Analyze Sentiment]
+end
+
+subgraph Smoothing
+F1[Smooth Vectors]
+G1[Smooth Corpus Vectors]
+end
+
+subgraph DensityMapping
+H1[Interpolation Points]
+I1[Semantic Density Mapping]
+J1[Density Map]
+end
+
+subgraph AdaptiveChunking
+K1[Adaptive Chunking]
+L1[Adaptive Chunks]
+end
+
+subgraph Search
+M1[Process Search Results]
+end
+
+subgraph GenerateData
+N1[Generate Questions]
+O1[Generate Answers]
+end
+
+subgraph JSONHandling
+P1[Load JSON Data]
+Q1[Save JSON Data]
+end
+
+subgraph ExecutionFlow
+R1[Main Execution Flow]
+S((Final Output: Training Dataset))
+end
 
 ```
