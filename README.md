@@ -122,22 +122,39 @@ TO RUN:
 OUTPUT SCHEMA:
 --------------
 ```json
-[
-  {
-    "query": "string",
-    "context": "string",
-    "chunks": [
-      {
-        "text": "string",
-        "relevance_score": "number",
-        "sentiment": "number"
-      }
-    ],
-    "combined_score": "number",
-    "question": "string",
-    "answer": "string"
-  }
-]
+{
+  "query": "string",
+  "context": "string",
+  "citations": [
+    {
+      "start_char": "string",
+      "end_char": "string",
+      "source": "string",
+      "page_number": "string",
+      "chunk_number": "integer",
+      "line_number": "string"
+    }
+  ],
+  "chunks": [
+    {
+      "text": "string",
+      "start_char": "string",
+      "end_char": "string",
+      "page_number": "string",
+      "line_number": "string",
+      "image_filenames": [
+        "string"
+      ],
+      "image_descriptions": [
+        "string"
+      ],
+      "sentiment": "float",
+      "relevance_score": "float"
+    }
+  ],
+  "question": "string",
+  "answer": "string"
+}
 
 ```
 FLOW:
