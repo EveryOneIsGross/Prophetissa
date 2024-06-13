@@ -1,5 +1,6 @@
 # Prophetissa
 -------------
+![transparent_image](https://github.com/EveryOneIsGross/Prophetissa/assets/23621140/9b742d09-b4e3-466a-b214-fb976a5031e3)
 
 Prophetissa is an automated dataset generation tool designed to facilitate fine-tuning of AI models. It operates by taking input text and processing it through multiple search modules, each employing different techniques for text chunking, semantic search, and sentiment analysis. These search methods include hybrid, feel, PDF, wiki, and fractal search. The main script acts as a central coordinator, processing the results from these search modules, generating questions and answers based on the context, and saving the output in a structured JSON format. This pipeline ensures the generation of high-quality, contextually rich datasets suitable for training and fine-tuning AI models.
 
