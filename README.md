@@ -37,7 +37,7 @@ Search Modules:
    - Appends image descriptions to relevant chunks and calculates relevance scores.
   
    PDF md was generated using ['marker'](https://github.com/VikParuchuri/marker)
-   Use 'luna.py' (ollama and moondream) to process generated .md to add image descriptions.
+   Use ['luna.py'](https://github.com/EveryOneIsGross/Prophetissa/blob/main/luna.py) (ollama and moondream) to process generated .md to add image descriptions.
 
 5. wikiSEARCH.py:
    - Fetches Wikipedia pages based on the input query.
