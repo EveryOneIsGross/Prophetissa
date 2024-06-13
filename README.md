@@ -1,7 +1,8 @@
 # Prophetissa
 -------------
-~~
-~RAG~ finetune dataset generator using **ollama**. 
+
+
+~~RAG finetune dataset generator using **ollama**. 
 
 features:
 
