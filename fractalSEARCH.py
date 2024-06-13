@@ -1,3 +1,4 @@
+# v 03
 import os
 import numpy as np
 from gensim.models import Word2Vec
