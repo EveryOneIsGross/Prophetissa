@@ -10,6 +10,7 @@ Each search module follows its own flow for processing the input text, performin
 ----------------------------------------------------------------------------
 # ATTN:latest search additions have broken schemas for judgeDREAD (wip) 💀☕
 Certain generations work ok, pays to seperate different search jsons for now
+NAH ITS BROKEN, WORKING ON FIXING VALUES TO M DIST. FOR THRESHOLDING RESULTS
 ----------------------------------------------------------------------------
 ```
 
