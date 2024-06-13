@@ -1,5 +1,7 @@
-# ver 07
+# ver 09
 import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 import numpy as np
 from gensim.models import Word2Vec
 import logging
@@ -10,43 +12,56 @@ from sklearn.neighbors import KernelDensity
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-class Config:
-    def __init__(self, topk_results=16, max_tokens=128):
+class feelsConfig:
+    def __init__(self, topk_results=16, chunk_size=32, max_tokens=128):
         self.TOPK_RESULTS = topk_results
+        self.CHUNK_SIZE = chunk_size
         self.MAXTOKENS = max_tokens
 
-def preprocess_and_chunk(file_path, chunk_size=64, overlap=0.5, fallback_chunk_size=64):
-    # Read a text file and preprocess it into fixed-size chunks with overlap.
+def preprocess_and_chunk(file_path, chunk_size=64, overlap=0.5, fallback_chunk_size=512):
     with open(file_path, 'r', encoding='utf-8') as file:
         text = file.read().strip()
 
-    # Try to split by punctuation
     sentences = text.replace('\n', ' ').split('. ')
 
-    if len(sentences) <= 1 and '.' not in text:  # Check if there are no valid sentence delimiters
+    chunks = []
+    text_offset = 0
+
+    if len(sentences) <= 1 and '.' not in text:
         logging.warning("No valid punctuation for sentence splitting detected, using fallback method.")
-        # Fallback: Split by fixed number of words if no sentences are detected
         words = text.split()
-        chunks = []
         num_chunks = max(1, len(words) // fallback_chunk_size)
         for i in range(0, len(words), fallback_chunk_size):
             chunk_text = ' '.join(words[i:i+fallback_chunk_size])
-            chunks.append({'text': chunk_text, 'sentences': [words[i:i+fallback_chunk_size]]})
+            start_char = text_offset
+            end_char = start_char + len(chunk_text)
+            chunks.append({
+                'text': chunk_text,
+                'sentences': [words[i:i+fallback_chunk_size]],
+                'start_char': start_char,
+                'end_char': end_char,
+                'source': file_path
+            })
+            text_offset = end_char + 1
     else:
-        # Regular sentence-based chunking
         words = [sentence.split() for sentence in sentences]
-        chunks = []
-        step_size = max(1, int(chunk_size * (1 - overlap)))  # Ensure step size is at least 1
+        step_size = max(1, int(chunk_size * (1 - overlap)))
         for i in range(0, len(words), step_size):
             chunk_words = [word for sentence in words[i:i + chunk_size] for word in sentence]
             chunk_text = ' '.join(chunk_words)
-            chunks.append({'text': chunk_text, 'sentences': words[i:i + chunk_size]})
+            start_char = text_offset
+            end_char = start_char + len(chunk_text)
+            chunks.append({
+                'text': chunk_text,
+                'sentences': words[i:i + chunk_size],
+                'start_char': start_char,
+                'end_char': end_char,
+                'source': file_path
+            })
+            text_offset = end_char + 1
 
     return chunks
-
-
 
 def train_word2vec(chunks, vector_size=100, window=5, min_count=1, workers=4):
     sentences = [sentence for chunk in chunks for sentence in chunk['sentences']]
@@ -78,7 +93,7 @@ def semantic_search(model, query, chunks, top_k):
     similarities = [np.dot(query_vector, chunk_vec) / (np.linalg.norm(query_vector) * np.linalg.norm(chunk_vec)) for chunk_vec in chunk_vectors]
     top_indices = np.argsort(similarities)[-top_k:][::-1]
 
-    top_chunks = [(chunks[i]['text'], similarities[i]) for i in top_indices]
+    top_chunks = [(chunks[i], similarities[i]) for i in top_indices]
     return top_chunks
 
 def semantic_density_mapping(corpus_vectors, interpolation_points, batch_size=1000):
@@ -104,10 +119,11 @@ def semantic_density_mapping(corpus_vectors, interpolation_points, batch_size=10
 
 def adaptive_chunking(chunks, sentiments, density_map, min_chunk_size, max_chunk_size, sentiment_threshold=0.2, density_threshold=0.1):
     adaptive_chunks = []
-    current_chunk = {'text': '', 'sentences': []}
+    current_chunk = {'text': '', 'sentences': [], 'start_char': chunks[0]['start_char'], 'end_char': 0, 'source': chunks[0]['source']}
     for i in range(len(chunks)):
         current_chunk['text'] += chunks[i]['text'] + ' '
         current_chunk['sentences'].extend(chunks[i]['sentences'])
+        current_chunk['end_char'] = chunks[i]['end_char']
         if len(current_chunk['sentences']) >= min_chunk_size and (
             len(current_chunk['sentences']) >= max_chunk_size or
             i == len(chunks) - 1 or
@@ -115,18 +131,19 @@ def adaptive_chunking(chunks, sentiments, density_map, min_chunk_size, max_chunk
             np.max(np.abs(density_map[i//len(density_map)] - density_map[(i-1)//len(density_map)])) > density_threshold
         ):
             adaptive_chunks.append(current_chunk)
-            current_chunk = {'text': '', 'sentences': []}
+            if i < len(chunks) - 1:
+                current_chunk = {'text': '', 'sentences': [], 'start_char': chunks[i+1]['start_char'], 'end_char': 0, 'source': chunks[i+1]['source']}
     return adaptive_chunks
 
-def load_or_process_data(file_path):
-    cache_path = f"{file_path}.pickle"
+def load_or_process_data(file_path, config):
+    cache_path = f"{file_path}_feel.pickle"
     if os.path.exists(cache_path):
         logging.info(f"Loading data from cache: {cache_path}")
         with open(cache_path, 'rb') as cache_file:
             return pickle.load(cache_file)
     else:
         logging.info("Processing data...")
-        chunks = preprocess_and_chunk(file_path, chunk_size=16)
+        chunks = preprocess_and_chunk(file_path, chunk_size=config.CHUNK_SIZE)
         model = train_word2vec(chunks)
         sentiments = analyze_sentiment(chunks)
         corpus_vectors = [np.mean([model.wv[word] for word in chunk['text'].split() if word in model.wv], axis=0) for chunk in chunks if any(word in model.wv for word in chunk['text'].split())]
@@ -134,7 +151,7 @@ def load_or_process_data(file_path):
         interpolation_points = np.linspace(0, 9, 50)
         interpolation_points = np.array(np.meshgrid(interpolation_points, interpolation_points)).T.reshape(-1, 2)
         density_map = semantic_density_mapping(smooth_corpus_vectors, interpolation_points, batch_size=1000)
-        adaptive_chunks = adaptive_chunking(chunks, sentiments, density_map, min_chunk_size=5, max_chunk_size=20)
+        adaptive_chunks = adaptive_chunking(chunks, sentiments, density_map, min_chunk_size=5, max_chunk_size=config.MAXTOKENS)
 
         data = {
             'model': model,
@@ -150,33 +167,53 @@ def load_or_process_data(file_path):
         logging.info(f"Data processed and cached: {cache_path}")
         return data
 
-def main(file_path, query, config):
-    data = load_or_process_data(file_path)
+def searchFLOWfeels(file_path, query, config):
+    data = load_or_process_data(file_path, config)
     model = data['model']
     adaptive_chunks = data['adaptive_chunks']
-    search_results = search_results_with_sentiment(model, adaptive_chunks, query, config)
+    search_results = search_results_with_sentiment(model, adaptive_chunks, query, config, max_tokens=config.MAXTOKENS)
     return search_results
 
-def search_results_with_sentiment(model, adaptive_chunks, query, config):
+def search_results_with_sentiment(model, adaptive_chunks, query, config, max_tokens=50):
     results = semantic_search(model, query, adaptive_chunks, config.TOPK_RESULTS)
     unique_results = []
     seen_chunks = set()
 
     for chunk, score in results:
-        if chunk not in seen_chunks:
-            sentiment = TextBlob(chunk).sentiment.polarity
-            tokens = chunk.split()
-            if len(tokens) <= config.MAXTOKENS:
-                unique_results.append((chunk, score, sentiment))
-                seen_chunks.add(chunk)
+        if chunk['text'] not in seen_chunks:
+            sentiment = TextBlob(chunk['text']).sentiment.polarity
+            tokens = chunk['text'].split()
+            if len(tokens) <= max_tokens:
+                unique_results.append((chunk, round(score, 2), round(sentiment, 2)))
+                seen_chunks.add(chunk['text'])
             else:
-                shortened_chunk = ' '.join(tokens[:config.MAXTOKENS])
-                if shortened_chunk not in seen_chunks:
-                    sentiment = TextBlob(shortened_chunk).sentiment.polarity
-                    unique_results.append((shortened_chunk, score, sentiment))
-                    seen_chunks.add(shortened_chunk)
+                shortened_chunk = {
+                    'text': ' '.join(tokens[:max_tokens]),
+                    'start_char': chunk['start_char'],
+                    'end_char': chunk['start_char'] + len(' '.join(tokens[:max_tokens])),
+                    'source': chunk['source']
+                }
+                if shortened_chunk['text'] not in seen_chunks:
+                    sentiment = TextBlob(shortened_chunk['text']).sentiment.polarity
+                    unique_results.append((shortened_chunk, round(score, 2), round(sentiment, 2)))
+                    seen_chunks.add(shortened_chunk['text'])
 
     return unique_results
+
+if __name__ == '__main__':
+    config = feelsConfig(topk_results=2, chunk_size=32, max_tokens=512)
+    file_path = 'conTEXTS\\text\\20th Century Women - The Script Lab1716430313.792667.txt'
+    query = 'What was the most important thing that happened in the 20th century?'
+    results = searchFLOWfeels(file_path, query, config)
+    for chunk, score, sentiment in results:
+        print(f"Chunk: {chunk['text']}")
+        print(f"Start Char: {chunk['start_char']}")
+        print(f"End Char: {chunk['end_char']}")
+        print(f"Source: {chunk['source']}")
+        print(f"Relevance Score: {score:.3f}")
+        print(f"Sentiment: {sentiment:.3f}")
+        print("---")
+
 
 if __name__ == '__main__':
     main()
