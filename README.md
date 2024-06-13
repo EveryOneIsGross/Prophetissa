@@ -1,11 +1,15 @@
 # Prophetissa
 -------------
-# ATTN:latest search additions have broken schemas for judgeDREAD (wip) 💀☕
 
 The main script acts as a central hub, orchestrating the different search methods and processing the results to generate a dataset with questions and answers.
 Each search module follows its own flow for processing the input text, performing search operations, and returning relevant results. The main script then processes these results, formats the context, generates questions and answers, and saves the data to a JSON file.
 
 This script performs a search on input data, generates context-based questions and then their answers, and saves the results in a JSON file, providing an automated way to generate a grounded dataset for finetuning. 
+```
+----------------------------------------------------------------------------
+# ATTN:latest search additions have broken schemas for judgeDREAD (wip) 💀☕
+----------------------------------------------------------------------------
+```
 
 Prophetissa (prophetissa.py):
 1. Loads the configuration and initializes the OpenAI client.
