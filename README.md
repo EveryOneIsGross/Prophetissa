@@ -9,6 +9,7 @@ Each search module follows its own flow for processing the input text, performin
 ```
 ----------------------------------------------------------------------------
 # ATTN:latest search additions have broken schemas for judgeDREAD (wip) 💀☕
+Certain generations work ok, pays to seperate different search jsons for now
 ----------------------------------------------------------------------------
 ```
 
@@ -121,6 +122,10 @@ TO RUN:
 
 OUTPUT SCHEMA:
 --------------
+
+THIS IS A BIT OF A MESS, I GOT IMPATIENT SO THERE IS SOME MISALIGNED KEYS AND NESTING STILL THAT COULD BE REFACTORED TIGHTER.
+The below schema is for pdf2md converted docs. The search generations have [] placeholders for fields not yet implemented.
+
 ```json
 {
   "query": "string",
