@@ -94,8 +94,6 @@ Answer:
 ```
 [DOCS](https://docs.mistral.ai/guides/finetuning/)
 
-judgeDREAD is a ranking script that currently just makes a bs~ rank based on the hardcoded scores extracted from the chunks. an llm will drop in here to judge (also will need 2 add scores back into json schema so I don't have to bake them and strip them)
-
 TO RUN:
 -------
 ```
